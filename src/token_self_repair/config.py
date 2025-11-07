@@ -14,6 +14,11 @@ class Thresholds:
     repair_activation_uncertainty: float = 0.45
 
 
+# Constants for LangGraph agentic workflow
+UNCERTAINTY_THRESHOLD: float = 0.5
+MAX_REPAIR_ATTEMPTS: int = 3
+
+
 @dataclass(slots=True)
 class ProjectConfig:
     """Container for project-wide configuration values."""

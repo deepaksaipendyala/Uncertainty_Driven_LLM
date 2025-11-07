@@ -6,6 +6,11 @@ from dataclasses import dataclass
 from enum import Enum, auto
 from typing import List, Optional
 
+try:
+    from typing import TypedDict
+except ImportError:
+    from typing_extensions import TypedDict
+
 
 class UncertaintyLevel(Enum):
     """Discrete categories for token uncertainty."""
@@ -39,3 +44,18 @@ class GenerationStep:
     final: bool = False
     repair_attempt: int = 0
     repair_notes: Optional[str] = None
+
+
+class AgentState(TypedDict, total=False):
+    """State container for LangGraph-based self-repair agent."""
+
+    question: str
+    generation: str
+    token_uncertainties: List[float]
+    avg_uncertainty: float
+    repair_attempts: int
+    xai_message: str
+    messages: List[str]
+    logits: List[List[float]]  # Store logits for uncertainty computation
+    tokens: List[str]  # Store tokens for uncertainty computation
+    token_scores: List[TokenScore]  # Store full TokenScore objects for adapter
