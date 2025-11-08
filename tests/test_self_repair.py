@@ -14,7 +14,7 @@ class UniformLLM(LLMClient):
     tokens: Iterable[str]
 
     def generate(self, prompt: str, *, max_tokens: int = 256):
-        logits = [0.0, 0.0, 0.0, 0.0]
+        logits = [1.0, 1.0]
         for token in self.tokens:
             yield TokenLogit(token=token, logits=logits)
 
@@ -26,11 +26,11 @@ def test_pipeline_triggers_repair_when_uncertain():
             high_confidence=0.9,
             moderate_confidence=0.7,
             low_confidence=0.5,
-            repair_activation_uncertainty=0.2,
+            repair_activation_uncertainty=0.0,
         ),
     )
     llm = UniformLLM(tokens=["draft", "response"])
-    estimator = LogTokUEstimator(config=config)
+    estimator = LogTokUEstimator()
     messenger = StatusMessenger()
     strategy = ConstitutionalRepair()
     pipeline = UncertaintyAwarePipeline(
