@@ -1,3 +1,19 @@
+Metadata-Version: 2.4
+Name: token-self-repair
+Version: 0.1.0
+Summary: Token-level uncertainty driven self-repair for agentic LLM workflows.
+Author: Codex Agent
+License: MIT
+Requires-Python: >=3.10
+Description-Content-Type: text/markdown
+Requires-Dist: numpy>=1.26
+Requires-Dist: scipy>=1.11
+Requires-Dist: pydantic>=2.6
+Requires-Dist: rich>=13.7
+Requires-Dist: openai>=1.30.0
+Provides-Extra: dev
+Requires-Dist: pytest>=8.0; extra == "dev"
+
 # Token-Level Uncertainty Driven Self-Repair
 
 This project implements an open-source framework that infuses agentic LLM workflows with token-level uncertainty monitoring, automated self-repair, and transparent user messaging. The system integrates Logits-induced Token Uncertainty (LogTokU), adaptive confidence thresholding, and iterative refinement loops inspired by constitutional AI techniques.

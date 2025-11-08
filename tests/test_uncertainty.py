@@ -1,10 +1,8 @@
-from token_self_repair.config import ProjectConfig
 from token_self_repair.uncertainty.logtoku import LogTokUEstimator
 
 
 def test_logtoku_estimator_produces_scores():
-    config = ProjectConfig()
-    estimator = LogTokUEstimator(config=config)
+    estimator = LogTokUEstimator()
     tokens = ["a", "b", "c"]
     logits = [
         [0.0, 1.0, -0.5],

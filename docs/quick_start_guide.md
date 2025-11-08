@@ -64,6 +64,13 @@ cd SenU
 python generate.py --model_name llama2_chat_7B --gene 1 --mode one_pass --gpuid 0
 ```
 
+Want to exercise the hosted OpenAI path instead of a local model? Export
+`OPENAI_API_KEY` and run the consolidated example with the OpenAI backend flag:
+
+```bash
+python examples/test_logtoku_integration.py --backend openai --openai-model gpt-4o-mini
+```
+
 ### Step 3: Install Project Dependencies
 ```bash
 cd /home/dpendya/Documents/dlba
@@ -185,4 +192,3 @@ streamlit run src/token_self_repair/visualization/explainer_ui.py
 4. Track overall progress at the bottom of the plan
 
 Good luck with the implementation!
-

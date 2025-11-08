@@ -177,13 +177,14 @@ class LogTokUEstimator(UncertaintyEstimator):
         if len(logits) < self.k:
             raise ValueError(f"Logits length {len(logits)} < k={self.k}")
         
-        # Get top-k logit values
+        # Get top-k logit values and convert to positive evidence
         top_k_values = np.partition(logits, -self.k)[-self.k:]
+        evidence = np.maximum(top_k_values, 0) + 1e-3
         
-        # Dirichlet parameters
-        alpha = np.array([top_k_values])
+        # Dirichlet parameters (ensure strictly positive)
+        alpha = np.array([evidence])
         alpha_0 = alpha.sum(axis=1, keepdims=True)
-        
+
         # Digamma calculations
         psi_alpha_k_plus_1 = digamma(alpha + 1)
         psi_alpha_0_plus_1 = digamma(alpha_0 + 1)
