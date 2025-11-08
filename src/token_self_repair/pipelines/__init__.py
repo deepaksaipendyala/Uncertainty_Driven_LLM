@@ -4,6 +4,8 @@ from .base import UncertaintyAwarePipeline, PipelineResult
 from .controlflow import ControlFlowCoordinator, ControlFlowStage
 from .self_healing import SelfHealingCoordinator
 from .repair_agent import RepairAgentCoordinator
+from .token_self_repair_graph import TokenSelfRepairGraph
+from .graph_adapter import GraphPipelineAdapter, create_graph_pipeline
 from .reasoning import ReasoningCoordinator, ReasoningResult, default_reasoning_coordinator
 
 __all__ = [
@@ -13,6 +15,9 @@ __all__ = [
     "ControlFlowStage",
     "SelfHealingCoordinator",
     "RepairAgentCoordinator",
+    "TokenSelfRepairGraph",
+    "GraphPipelineAdapter",
+    "create_graph_pipeline",
     "ReasoningCoordinator",
     "ReasoningResult",
     "default_reasoning_coordinator",
