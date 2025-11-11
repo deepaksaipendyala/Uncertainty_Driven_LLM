@@ -8,7 +8,8 @@ from typing import Callable, List, Optional
 import numpy as np
 
 from .datasets import dataset_registry
-from .metrics import exact_match, expected_calibration_error
+from .metrics import expected_calibration_error
+from .judge import judge_answer
 from ..pipelines.reasoning import ReasoningCoordinator, ReasoningResult
 
 
@@ -21,6 +22,7 @@ class ReasoningSampleResult:
     correct: bool
     summary: str | None
     hotspots: List[tuple[str, str, float]]
+    judge_explanation: str
 
 
 @dataclass(slots=True)
@@ -44,10 +46,8 @@ class ReasoningEvaluationRunner:
             raise KeyError(f"Benchmark '{benchmark_name}' not registered.")
         benchmark = registry[benchmark_name]
 
-        predictions: List[str] = []
-        references: List[str] = []
-        uncertainties: List[float] = []
         sample_results: List[ReasoningSampleResult] = []
+        uncertainties: List[float] = []
 
         for idx, sample in enumerate(benchmark.samples):
             if max_samples is not None and idx >= max_samples:
@@ -59,8 +59,6 @@ class ReasoningEvaluationRunner:
             prediction = "".join(tokens).strip()
             if not prediction:
                 prediction = ""  # ensure string
-            predictions.append(prediction)
-            references.append(sample.reference)
 
             final_uncertainty = (
                 reasoning_result.pipeline_result.step.token_scores[-1].total_uncertainty
@@ -68,6 +66,15 @@ class ReasoningEvaluationRunner:
                 else 1.0
             )
             uncertainties.append(final_uncertainty)
+
+            judge = judge_answer(sample.prompt, prediction, sample.reference)
+            if judge.correct is None:
+                fallback_correct = prediction.strip() == sample.reference.strip()
+                correct = fallback_correct
+                judge_explanation = judge.explanation + " Fallback to exact match comparison."
+            else:
+                correct = bool(judge.correct)
+                judge_explanation = judge.explanation
 
             hotspots: List[tuple[str, str, float]] = []
             if reasoning_result.uncertainty_map:
@@ -85,16 +92,17 @@ class ReasoningEvaluationRunner:
                     reference=sample.reference,
                     prediction=prediction,
                     final_uncertainty=final_uncertainty,
-                    correct=prediction == sample.reference,
+                    correct=correct,
                     summary=reasoning_result.summary,
                     hotspots=hotspots,
+                    judge_explanation=judge_explanation,
                 )
             )
 
-        if predictions:
-            accuracy = exact_match(predictions, references)
-            labels = np.array([int(p == r) for p, r in zip(predictions, references)], dtype=float)
+        if sample_results:
+            labels = np.array([1.0 if s.correct else 0.0 for s in sample_results], dtype=float)
             confidences = 1.0 - np.array(uncertainties)
+            accuracy = float(labels.mean())
             calibration_error = expected_calibration_error(confidences, labels)
             avg_uncertainty = float(np.mean(uncertainties))
         else:
