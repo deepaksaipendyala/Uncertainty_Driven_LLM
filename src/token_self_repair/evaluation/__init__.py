@@ -7,6 +7,7 @@ from .reasoning_runner import (
     ReasoningSampleResult,
 )
 from .datasets import dataset_registry
+from .judge import judge_answer, JudgeResult
 
 __all__ = [
     "EvaluationRunner",
@@ -14,5 +15,7 @@ __all__ = [
     "ReasoningEvaluationRunner",
     "ReasoningBenchmarkResult",
     "ReasoningSampleResult",
+    "JudgeResult",
+    "judge_answer",
     "dataset_registry",
 ]
